@@ -1,0 +1,133 @@
+module git {
+    yang-version "1.1";
+
+    // namespace
+    namespace "urn:srl_sdk_apps/git";
+    prefix "srl-git";
+
+    // imports
+    import srl_nokia-common {
+        prefix srl_nokia-comm;
+    }
+
+    // description
+    description
+        "This module defines configuration and operational state data related to the git agent.";
+
+    // revision
+    revision "2020-09-18" {
+        description
+          "git 0.0.1";
+    }
+
+    grouping git-top {
+        description
+            "Top-level grouping for the git app";
+        
+        container git {
+            presence "presence container";
+            description
+                "Top-level enclosing container for git app
+                 Config and operational state data";
+            uses git-config;
+            uses git-state;
+        }
+    }
+
+    grouping git-config {
+        description
+            "Common Configuration for git";
+        leaf organization {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+            description
+                "Git organization";
+        }
+        leaf repo {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+            description
+                "Git repo";
+        }
+        leaf file {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+            description
+                "Git repo";
+        }
+
+        leaf token {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+        }
+        leaf author {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+        }
+        leaf author-email {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+        }
+        leaf branch {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+        }
+        leaf action {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+        }
+    }
+
+    grouping git-state {
+        description
+            "Common State for git";
+        leaf oper-state {
+            type srl_nokia-comm:oper-state;
+            description
+              "Details the operational state of the git connection";
+            config false;
+        }
+        container statistics {
+            config false;
+            description
+                "git statistics";
+            leaf success {
+                type srl_nokia-comm:zero-based-counter64;
+                description
+                    "The total number of successful git transactions";
+            }
+            leaf failure {
+                type srl_nokia-comm:zero-based-counter64;
+                description
+                    "The total number of failed git transactions";
+            }
+        }
+    }
+
+    // data definition statements
+    uses git-top;
+}

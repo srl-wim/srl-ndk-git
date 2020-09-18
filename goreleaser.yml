@@ -1,0 +1,54 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+    # you may remove this if you don't need go generate
+    - go generate ./...
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X github.com/srl-wim/srl-ndk-git/cmd.version={{.Version}} -X github.com/srl-wim/srl-ndk-git/cmd.commit={{.ShortCommit}} -X github.com/srl-wim/srl-ndk-git/cmd.date={{.Date}}
+    goos:
+      - linux
+      # - windows
+      - darwin
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      #windows: Windows
+      #386: i386
+      #amd64: x86_64
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+nfpms:
+  - id: "srlndk-git"
+    package_name: "srlndk-git"
+    maintainer: "Wim Henderickx <wim.henderickx@nokia.com>"
+    description: |
+      srlndk-git written in go
+    vendor: "Nokia"
+    license: "BSD 2"
+    formats:
+      - rpm
+      - deb
+    bindir: /usr/bin
+    files:
+      ./dist/srlndk-git_linux_amd64/srlndk-git: "/opt/srlinux/usr/bin/ndk-git"
+    config_files:
+      ./yang/ndk-git.yang: "/opt/ndk-git/yang/ndk-git.yang"
+      ./yml/ndk-git.yml: "/etc/opt/srlinux/appmgr/ndk-git.yml"
+    overrides:
+      rpm:
+        scripts:
