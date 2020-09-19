@@ -1,5 +1,5 @@
 /*
-Package ndk-git is a generated package which contains definitions
+Package ndkygit is a generated package which contains definitions
 of structs which represent a YANG schema. The generated schema can be
 compressed by a series of transformations (compression was false
 in this case).
@@ -11,18 +11,4 @@ using the following YANG input files:
 Imported modules were sourced from:
 	- ../yang/...
 */
-package ndk-git
-
-import (
-	"encoding/json"
-	"fmt"
-	"reflect"
-
-	"github.com/openconfig/ygot/ygot"
-	"github.com/openconfig/goyang/pkg/yang"
-	"github.com/openconfig/ygot/ytypes"
-)
-
-
-
-
+package ndkygit

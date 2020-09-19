@@ -1,5 +1,5 @@
 /*
-Package ndk-git is a generated package which contains definitions
+Package ndkygit is a generated package which contains definitions
 of structs which represent a YANG schema. The generated schema can be
 compressed by a series of transformations (compression was false
 in this case).
@@ -11,18 +11,13 @@ using the following YANG input files:
 Imported modules were sourced from:
 	- ../yang/...
 */
-package ndk-git
+package ndkygit
 
 import (
-	"encoding/json"
-	"fmt"
 	"reflect"
 
 	"github.com/openconfig/ygot/ygot"
-	"github.com/openconfig/goyang/pkg/yang"
-	"github.com/openconfig/ygot/ytypes"
 )
-
 
 // ΛEnum is a map, keyed by the name of the type defined for each enum in the
 // generated Go code, which provides a mapping between the constant int64 value
@@ -31,18 +26,17 @@ import (
 // valid YANG identifier.
 var ΛEnum = map[string]map[int64]ygot.EnumDefinition{
 	"E_Git_OperState": {
-		2: {Name: "up"},
-		3: {Name: "down"},
-		4: {Name: "empty"},
-		5: {Name: "downloading"},
-		6: {Name: "booting"},
-		7: {Name: "starting"},
-		8: {Name: "failed"},
-		9: {Name: "synchronizing"},
+		2:  {Name: "up"},
+		3:  {Name: "down"},
+		4:  {Name: "empty"},
+		5:  {Name: "downloading"},
+		6:  {Name: "booting"},
+		7:  {Name: "starting"},
+		8:  {Name: "failed"},
+		9:  {Name: "synchronizing"},
 		10: {Name: "upgrading"},
 	},
 }
-
 
 // ΛEnumTypes is a map, keyed by a YANG schema path, of the enumerated types that
 // correspond with the leaf. The type is represented as a reflect.Type. The naming
@@ -52,4 +46,3 @@ var ΛEnumTypes = map[string][]reflect.Type{
 		reflect.TypeOf((E_Git_OperState)(0)),
 	},
 }
-

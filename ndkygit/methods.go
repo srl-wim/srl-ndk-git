@@ -1,5 +1,5 @@
 /*
-Package ndk-git is a generated package which contains definitions
+Package ndkygit is a generated package which contains definitions
 of structs which represent a YANG schema. The generated schema can be
 compressed by a series of transformations (compression was false
 in this case).
@@ -11,18 +11,17 @@ using the following YANG input files:
 Imported modules were sourced from:
 	- ../yang/...
 */
-package ndk-git
+package ndkygit
 
 import (
 	"encoding/json"
 	"fmt"
 	"reflect"
 
-	"github.com/openconfig/ygot/ygot"
 	"github.com/openconfig/goyang/pkg/yang"
+	"github.com/openconfig/ygot/ygot"
 	"github.com/openconfig/ygot/ytypes"
 )
-
 
 // Binary is a type that is used for fields that have a YANG type of
 // binary. It is used such that binary fields can be distinguished from
@@ -42,7 +41,7 @@ var (
 func init() {
 	var err error
 	if SchemaTree, err = UnzipSchema(); err != nil {
-		panic("schema error: " +  err.Error())
+		panic("schema error: " + err.Error())
 	}
 }
 
@@ -54,9 +53,9 @@ func Schema() (*ytypes.Schema, error) {
 	}
 
 	return &ytypes.Schema{
-		Root: nil,
+		Root:       nil,
 		SchemaTree: uzp,
-		Unmarshal: Unmarshal,
+		Unmarshal:  Unmarshal,
 	}, nil
 }
 
@@ -81,7 +80,7 @@ func Unmarshal(data []byte, destStruct ygot.GoStruct, opts ...ytypes.UnmarshalOp
 	tn := reflect.TypeOf(destStruct).Elem().Name()
 	schema, ok := SchemaTree[tn]
 	if !ok {
-		return fmt.Errorf("could not find schema for type %s", tn )
+		return fmt.Errorf("could not find schema for type %s", tn)
 	}
 	var jsonTree interface{}
 	if err := json.Unmarshal([]byte(data), &jsonTree); err != nil {
@@ -89,7 +88,6 @@ func Unmarshal(data []byte, destStruct ygot.GoStruct, opts ...ytypes.UnmarshalOp
 	}
 	return ytypes.Unmarshal(schema, destStruct, jsonTree, opts...)
 }
-
 
 // Validate validates s against the YANG schema corresponding to its type.
 func (t *Git_Git) Validate(opts ...ygot.ValidationOption) error {
@@ -103,7 +101,6 @@ func (t *Git_Git) Validate(opts ...ygot.ValidationOption) error {
 // that are included in the generated code.
 func (t *Git_Git) ΛEnumTypeMap() map[string][]reflect.Type { return ΛEnumTypes }
 
-
 // Validate validates s against the YANG schema corresponding to its type.
 func (t *Git_Git_Statistics) Validate(opts ...ygot.ValidationOption) error {
 	if err := ytypes.Validate(SchemaTree["Git_Git_Statistics"], t, opts...); err != nil {
@@ -115,5 +112,3 @@ func (t *Git_Git_Statistics) Validate(opts ...ygot.ValidationOption) error {
 // ΛEnumTypeMap returns a map, keyed by YANG schema path, of the enumerated types
 // that are included in the generated code.
 func (t *Git_Git_Statistics) ΛEnumTypeMap() map[string][]reflect.Type { return ΛEnumTypes }
-
-

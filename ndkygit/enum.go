@@ -1,5 +1,5 @@
 /*
-Package ndk-git is a generated package which contains definitions
+Package ndkygit is a generated package which contains definitions
 of structs which represent a YANG schema. The generated schema can be
 compressed by a series of transformations (compression was false
 in this case).
@@ -11,18 +11,11 @@ using the following YANG input files:
 Imported modules were sourced from:
 	- ../yang/...
 */
-package ndk-git
+package ndkygit
 
 import (
-	"encoding/json"
-	"fmt"
-	"reflect"
-
 	"github.com/openconfig/ygot/ygot"
-	"github.com/openconfig/goyang/pkg/yang"
-	"github.com/openconfig/ygot/ytypes"
 )
-
 
 // E_Git_OperState is a derived int64 type which is used to represent
 // the enumerated node Git_OperState. An additional value named
@@ -37,7 +30,7 @@ type E_Git_OperState int64
 func (E_Git_OperState) IsYANGGoEnum() {}
 
 // ΛMap returns the value lookup map associated with  Git_OperState.
-func (E_Git_OperState) ΛMap() map[string]map[int64]ygot.EnumDefinition { return ΛEnum; }
+func (E_Git_OperState) ΛMap() map[string]map[int64]ygot.EnumDefinition { return ΛEnum }
 
 // String returns a logging-friendly string for E_Git_OperState.
 func (e E_Git_OperState) String() string {
@@ -66,4 +59,3 @@ const (
 	// Git_OperState_upgrading corresponds to the value upgrading of Git_OperState
 	Git_OperState_upgrading E_Git_OperState = 10
 )
-
