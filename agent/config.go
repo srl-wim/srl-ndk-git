@@ -11,9 +11,15 @@ import (
 )
 
 type yangGit struct {
+	NetworkInstance struct {
+		Value string `json:"value"`
+	} `json:"network-instance"`
 	Organization struct {
 		Value string `json:"value"`
 	} `json:"organization"`
+	OWner struct {
+		Value string `json:"value"`
+	} `json:"owner"`
 	Repo struct {
 		Value string `json:"value"`
 	} `json:"repo"`

@@ -42,7 +42,13 @@ func (a *Agent) GetRef(commitBranch *string) (err error) {
 	log.Info("GetRef ...")
 
 	// Get NS
-	ns, err := netns.GetFromName("srbase-mgmt")
+	var nsName string
+	if a.Config.YangConfig.NetworkInstance.Value == "" {
+		nsName = "mgmt"
+	} else {
+		nsName = a.Config.YangConfig.NetworkInstance.Value
+	}
+	ns, err := netns.GetFromName("srbase-" + nsName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -93,7 +99,13 @@ func (a *Agent) GetTree() (err error) {
 
 	entries = append(entries, entry)
 
-	ns, err := netns.GetFromName("srbase-mgmt")
+	var nsName string
+	if a.Config.YangConfig.NetworkInstance.Value == "" {
+		nsName = "mgmt"
+	} else {
+		nsName = a.Config.YangConfig.NetworkInstance.Value
+	}
+	ns, err := netns.GetFromName("srbase-" + nsName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -109,7 +121,13 @@ func (a *Agent) GetTree() (err error) {
 
 // PushCommit creates the commit in the given reference using the given tree.
 func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error) {
-	ns, err := netns.GetFromName("srbase-mgmt")
+	var nsName string
+	if a.Config.YangConfig.NetworkInstance.Value == "" {
+		nsName = "mgmt"
+	} else {
+		nsName = a.Config.YangConfig.NetworkInstance.Value
+	}
+	ns, err := netns.GetFromName("srbase-" + nsName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -143,7 +161,13 @@ func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error)
 
 // CreatePR creates a pull request. Based on: https://godoc.org/github.com/google/go-github/github#example-PullRequestsService-Create
 func (a *Agent) CreatePR(commitBranch *string) (err error) {
-	ns, err := netns.GetFromName("srbase-mgmt")
+	var nsName string
+	if a.Config.YangConfig.NetworkInstance.Value == "" {
+		nsName = "mgmt"
+	} else {
+		nsName = a.Config.YangConfig.NetworkInstance.Value
+	}
+	ns, err := netns.GetFromName("srbase-" + nsName)
 	if err != nil {
 		log.Fatal(err)
 	}

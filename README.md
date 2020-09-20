@@ -34,7 +34,7 @@ Below is a procedure to install the agent using yum, but there are other methods
 ```bash
 login to the SRL instance ssh admin@<ip address>
 from the command prompt execute bash
-sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.1.0/srl-ndk-git_0.1.0_linux_amd64.rpm
+sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.2.0/srl-ndk-git_0.2.0_linux_amd64.rpm
 ```
 
 Example:
@@ -125,6 +125,18 @@ A:wan2# show system application
 ```
 
 You see the ndk-git agent appear in the application list. It has a PID of 333407 in this example. If you defined in the YML file that the ndk-git agent should have waited for configuration, the PID would not have been allocated since there was no configuration in the system and hence the agent process would not have started.
+
+### Configuring DNS
+
+DNS needs to be configured to ensure the github client finds the github api server. We use google dns in this example but other DNS servers can be used.
+
+```
+enter candidate
+set / system dns network-instance mgmt
+set / system dns server-list [ 8.8.8.8 8.8.4.4]
+commit stay
+```
+
 
 ### Configuring the agent
 
