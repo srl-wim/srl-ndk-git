@@ -6,8 +6,14 @@ module git {
     prefix "srl-git";
 
     // imports
+    import ndk-git-types {
+        prefix srl_sdk_apps-git-types;
+    }
     import srl_nokia-common {
         prefix srl_nokia-comm;
+    }
+    import srl_nokia-network-instance {
+        prefix srl-netinst;
     }
 
     // description
@@ -37,7 +43,26 @@ module git {
     grouping git-config {
         description
             "Common Configuration for git";
+        leaf network-instance {
+            default "mgmt";
+            type leafref {
+                path "/srl-netinst:network-instance/srl-netinst:name";
+            }
+            description
+                "Reference to a configured network-instance used for reachability to the server
+
+                This network-instance must already exist in the system, and different servers within the same server-group may use difference network-instances for connectivity.";
+        }
         leaf organization {
+            type string {
+                // Add all accepted characters here
+                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                length "0..255";
+            }
+            description
+                "Git organization";
+        }
+        leaf owner {
             type string {
                 // Add all accepted characters here
                 pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
@@ -94,11 +119,12 @@ module git {
             }
         }
         leaf action {
-            type string {
-                // Add all accepted characters here
-                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
-                length "0..255";
-            }
+            type srl_sdk_apps-git-types:action-type;
+            // type string {
+            //     // Add all accepted characters here
+            //     pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+            //     length "0..255";
+            // }
         }
     }
 

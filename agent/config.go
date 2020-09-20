@@ -115,6 +115,8 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 		if op == srlndk.SdkMgrOperation_Delete {
 			// Handle delete Configuration
 			log.Printf("Handle Delete Config")
+			jsPath := ".git"
+			a.deleteTelemetry(&jsPath)
 
 		}
 		return
@@ -148,6 +150,7 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 			log.Printf("GIT connect")
 			a.GitClient()
 			a.Github.token = &a.Config.YangConfig.Token.Value
+			a.Config.YangConfig.OperState = "OPER_STATE_up"
 		}
 
 		log.Printf("Action: %s \n", a.Config.YangConfig.Action.Value)
@@ -155,49 +158,95 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 			log.Print("Git Branch")
 
 			if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Fatalf("Unable to get/create the commit reference: %s\n", err)
+				log.Printf("Error: Unable to get/create the commit reference: %s\n", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 			if a.Github.Ref == nil {
-				log.Fatalf("No error where returned but the reference is nil")
+				log.Printf("Error: No error where returned but the reference is nil")
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
+			a.Config.YangConfig.Statistics.Success.Value++
 		}
 
 		if a.Config.YangConfig.Action.Value == "commit" {
 			log.Print("Git commit")
 
 			if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Fatalf("Unable to get/create the commit reference: %s\n", err)
+				log.Printf("Error Unable to get/create the commit reference: %s\n", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 			if a.Github.Ref == nil {
-				log.Fatalf("No error where returned but the reference is nil")
+				log.Printf("Error: No error where returned but the reference is nil")
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 
 			if err := a.GetTree(); err != nil {
-				log.Fatalf("Unable to create the tree based on the provided files: %s\n", err)
+				log.Printf("Error Unable to create the tree based on the provided files: %s\n", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 
 			if err := a.PushCommit(a.Github.Ref, a.Github.Tree); err != nil {
-				log.Fatalf("Unable to create the commit: %s\n", err)
+				log.Printf("Error Unable to create the commit: %s\n", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
+			a.Config.YangConfig.Statistics.Success.Value++
 		}
 
 		if a.Config.YangConfig.Action.Value == "pr" {
 			log.Print("Git pull request")
 
 			if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Fatalf("Unable to get/create the commit reference: %s\n", err)
+				log.Printf("Error Unable to get/create the commit reference: %s\n", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 			if a.Github.Ref == nil {
-				log.Fatalf("No error where returned but the reference is nil")
+				log.Printf("Error: No error where returned but the reference is nil")
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 
 			if err := a.GetTree(); err != nil {
-				log.Fatalf("Unable to create the tree based on the provided files: %s\n", err)
+				log.Printf("Error: Unable to create the tree based on the provided files: %s\n", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
 
 			if err := a.CreatePR(&a.Config.YangConfig.Branch.Value); err != nil {
 				log.Printf("Error while creating the pull request: %s", err)
+				a.Config.YangConfig.Statistics.Failure.Value++
+				a.updateConfigTelemetry()
+				return
 			}
+			a.Config.YangConfig.Statistics.Success.Value++
 		}
+		a.updateConfigTelemetry()
 	}
+}
+
+func (a *Agent) updateConfigTelemetry() {
+	jsPath := ".git"
+		jsData, err := json.Marshal(a.Config.YangConfig)
+		if err != nil {
+			log.Fatalf("Can not marshal config data:%v error %s", *a.Config.YangConfig, err)
+		}
+		jsonStr := string(jsData)
+
+		log.Printf("Sending telemetry update js_path: %s js_data: %s", jsPath, jsonStr)
+		a.updateTelemetry(&jsPath, &jsonStr)
 }
