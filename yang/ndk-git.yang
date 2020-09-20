@@ -15,6 +15,9 @@ module ndk-git {
     import srl_nokia-network-instance {
         prefix srl-netinst;
     }
+    import srl_nokia-extensions {
+      prefix srl-ext;
+    }
 
     // description
     description
@@ -92,10 +95,15 @@ module ndk-git {
 
         leaf token {
             type string {
-                // Add all accepted characters here
-                pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
-                length "0..255";
+                 // Add all accepted characters here
+                 pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
+                 length "0..255";
             }
+            //type string {
+            //    srl-ext:generated-class-name "SecretKey";
+            //}
+            //description
+            //    "The unencrypted shared key used between the client and server";
         }
         leaf author {
             type string {

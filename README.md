@@ -34,7 +34,7 @@ Below is a procedure to install the agent using yum, but there are other methods
 ```bash
 login to the SRL instance ssh admin@<ip address>
 from the command prompt execute bash
-sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.2.0/srl-ndk-git_0.2.0_linux_amd64.rpm -y
+sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.1.0/srl-ndk-git_0.1.0_linux_amd64.rpm -y
 ```
 
 Example:
@@ -48,7 +48,7 @@ Welcome to the srlinux CLI.
 Type 'help' (and press <ENTER>) if you need any help using this.
 --{ running }--[  ]--
 A:wan2# bash
-bash-4.2$ sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.1.0/srl-ndk-git_0.1.0_linux_amd64.rpm
+bash-4.2$ sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.1.0/srl-ndk-git_0.1.0_linux_amd64.rpm -y
 ```
 
 ### Yum install with local download
@@ -137,24 +137,90 @@ set / system dns server-list [ 8.8.8.8 8.8.4.4]
 commit stay
 ```
 
-
-### Configuring the agent
-
-Next step is configuring the agent
-Given SRL is a fully transactional system you first have to enter in the candidate datastore.
+I sometimes have to also update the local dns entries like this
 
 ```
 enter candidate
-```
-
-Next you navigate through the CLI based on the YANG tree you defined.
-
-```
-/ git
+set system dns host-entry api.github.com ipv4-address 140.82.121.6
 commit stay
 ```
 
+### Configuring the agent
 
+Next step is configuring the git client. In order for the client to operate it should be configured with the following parameters:
+
+* owner or organization: depending on how you created the repo you should use either owner or organization. This field should be configured with the name of the github owner or organization
+* repo: name of github repository
+* token: id of the token
+* branch: name of the branch that will be created in the repo
+* file: name of the file that should be used for the file that will be committed in the repo
+* author: name of the Author that will be used during commit/pull-request
+* author-email: email of the Author that will be used during commit/pull-request
+
+Example:
+
+```
+enter candidate
+set / git-client organization srl-wim
+set / git-client repo srl-lab-config-store
+set / git-client file wan1-config.json
+set / git-client token ****
+set / git-client author WHenderickx
+set / git-client author-email wim.henderickx@gmail.com
+set / git-client branch test-branch2
+```
+
+### Github actions
+
+In order to perform a github action and workflow you can execute the following sequence of commands:
+
+Create a branch
+
+```
+enter candidate
+set / git-client action branch
+commit stay
+```
+
+Commit; the file we use to commit to github is the startup file.
+
+```
+enter candidate
+save startup
+set / git-client action commit
+commit stay
+```
+
+Once you are ok with the updates you can create a pull request
+
+```
+enter candidate
+set / git-client action pull-request
+commit stay
+```
+
+## State
+
+The github client stores the operational state of the transactions.
+
+```
+A:wan1# info from state / git-client
+    organization srl-wim
+    owner ""
+    repo srl-lab-config-store
+    file wan1-config.json
+    token 1d644cd6fbac8d69a0979f83944c2c5b9afccede
+    author WHenderickx
+    author-email wim.henderickx@gmail.com
+    branch test-branch2
+    action pull-request
+    oper-state up
+    statistics {
+        success 2
+        failure 0
+    }
+--{ candidate shared default }--[ git-client ]-
+```
 
 ## Logging
 
@@ -164,14 +230,14 @@ Information that the agent is providing is also send to /var/log/srlinux/stdout/
 ## Open items
 
 * action: should be an atomic command without commit stay
-* CommitMessage, PRmesaage, etc -> how to handle this better versus hard coding
+* CommitMessage, PRmessage, etc -> how to handle this better versus hard coding
 * yang: space in the name
 * yang: store token in hash form
-* We use the startup file as source
-* Why is ygot not generating the struct so we can marshal the data
 * Enabling this through a proxy
 
-
 ## Ongoing
-* Telemetry
-* yang: make namespace variable -> now it is fixed to mgmt
+* to be tested: network-instance
+
+## To be discussed
+* We use the startup file as source
+* Why is ygot not generating the struct so we can marshal the data

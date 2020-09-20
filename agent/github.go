@@ -59,7 +59,20 @@ func (a *Agent) GetRef(commitBranch *string) (err error) {
 		log.Fatal(err)
 	}
 
-	if a.Github.Ref, _, err = a.Github.client.Git.GetRef(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, "refs/heads/"+*commitBranch); err == nil {
+	o := ""
+	if a.Config.YangConfig.Organization.Value != "" {
+		o = a.Config.YangConfig.Organization.Value
+	}
+	if o == "" {
+		if a.Config.YangConfig.Owner.Value != "" {
+			o = a.Config.YangConfig.Owner.Value
+		} else {
+			log.Printf("Error: organization or owner should be set")
+			return nil
+		}
+	}
+
+	if a.Github.Ref, _, err = a.Github.client.Git.GetRef(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, "refs/heads/"+*commitBranch); err == nil {
 		return nil
 	}
 
@@ -74,11 +87,11 @@ func (a *Agent) GetRef(commitBranch *string) (err error) {
 	}
 
 	var baseRef *github.Reference
-	if baseRef, _, err = a.Github.client.Git.GetRef(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, "refs/heads/"+*a.Github.baseBranch); err != nil {
+	if baseRef, _, err = a.Github.client.Git.GetRef(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, "refs/heads/"+*a.Github.baseBranch); err != nil {
 		return err
 	}
 	newRef := &github.Reference{Ref: github.String("refs/heads/" + *commitBranch), Object: &github.GitObject{SHA: baseRef.Object.SHA}}
-	a.Github.Ref, _, err = a.Github.client.Git.CreateRef(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, newRef)
+	a.Github.Ref, _, err = a.Github.client.Git.CreateRef(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, newRef)
 	return err
 
 }
@@ -116,7 +129,20 @@ func (a *Agent) GetTree() (err error) {
 		log.Fatal(err)
 	}
 
-	a.Github.Tree, _, err = a.Github.client.Git.CreateTree(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, *a.Github.Ref.Object.SHA, entries)
+	o := ""
+	if a.Config.YangConfig.Organization.Value != "" {
+		o = a.Config.YangConfig.Organization.Value
+	}
+	if o == "" {
+		if a.Config.YangConfig.Owner.Value != "" {
+			o = a.Config.YangConfig.Owner.Value
+		} else {
+			log.Printf("Error: organization or owner should be set")
+			return nil
+		}
+	}
+
+	a.Github.Tree, _, err = a.Github.client.Git.CreateTree(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, *a.Github.Ref.Object.SHA, entries)
 	return err
 }
 
@@ -137,8 +163,20 @@ func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error)
 	if err != nil {
 		log.Fatal(err)
 	}
+	o := ""
+	if a.Config.YangConfig.Organization.Value != "" {
+		o = a.Config.YangConfig.Organization.Value
+	}
+	if o == "" {
+		if a.Config.YangConfig.Owner.Value != "" {
+			o = a.Config.YangConfig.Owner.Value
+		} else {
+			log.Printf("Error: organization or owner should be set")
+			return nil
+		}
+	}
 	// Get the parent commit to attach the commit to.
-	parent, _, err := a.Github.client.Repositories.GetCommit(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, *a.Github.Ref.Object.SHA)
+	parent, _, err := a.Github.client.Repositories.GetCommit(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, *a.Github.Ref.Object.SHA)
 	if err != nil {
 		return err
 	}
@@ -149,14 +187,14 @@ func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error)
 	date := time.Now()
 	author := &github.CommitAuthor{Date: &date, Name: &a.Config.YangConfig.Author.Value, Email: &a.Config.YangConfig.AuthorEmail.Value}
 	commit := &github.Commit{Author: author, Message: a.Github.commitMessage, Tree: tree, Parents: []*github.Commit{parent.Commit}}
-	newCommit, _, err := a.Github.client.Git.CreateCommit(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, commit)
+	newCommit, _, err := a.Github.client.Git.CreateCommit(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, commit)
 	if err != nil {
 		return err
 	}
 
 	// Attach the commit to the master branch.
 	ref.Object.SHA = newCommit.SHA
-	_, _, err = a.Github.client.Git.UpdateRef(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, ref, false)
+	_, _, err = a.Github.client.Git.UpdateRef(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, ref, false)
 	return err
 }
 
@@ -190,7 +228,20 @@ func (a *Agent) CreatePR(commitBranch *string) (err error) {
 		MaintainerCanModify: github.Bool(true),
 	}
 
-	pr, _, err := a.Github.client.PullRequests.Create(a.Github.ctx, a.Config.YangConfig.Organization.Value, a.Config.YangConfig.Repo.Value, newPR)
+	o := ""
+	if a.Config.YangConfig.Organization.Value != "" {
+		o = a.Config.YangConfig.Organization.Value
+	}
+	if o == "" {
+		if a.Config.YangConfig.Owner.Value != "" {
+			o = a.Config.YangConfig.Owner.Value
+		} else {
+			log.Printf("Error: organization or owner should be set")
+			return nil
+		}
+	}
+
+	pr, _, err := a.Github.client.PullRequests.Create(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, newPR)
 	if err != nil {
 		return err
 	}

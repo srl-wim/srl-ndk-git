@@ -49,7 +49,7 @@ type yangGitStatistics struct {
 	} `json:"success"`
 	Failure struct {
 		Value uint64 `json:"value"`
-	} `json:"failures"`
+	} `json:"failure"`
 }
 
 type gitClientState struct {
@@ -169,7 +169,7 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 		if a.Config.YangConfig.Branch.Value != "" && (a.Config.YangConfig.Owner.Value != "" || a.Config.YangConfig.Organization.Value != "") && a.Config.YangConfig.Author.Value != "" && a.Config.YangConfig.AuthorEmail.Value != "" && a.Config.YangConfig.Repo.Value != "" {
 			switch a.Config.YangConfig.Action {
 			case "ACTION_branch":
-				log.Print("Git branck action")
+				log.Print("Git branch action")
 				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
 					log.Printf("Error: Unable to get/create the commit reference: %s\n", err)
 					a.Github.state.Failure++
@@ -182,7 +182,7 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 					a.updateConfigTelemetry()
 					return
 				}
-				a.Config.YangConfig.Statistics.Success.Value++
+				a.Github.state.Success++
 			case "ACTION_commit":
 				log.Print("Git commit action")
 				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
@@ -209,13 +209,11 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 					a.updateConfigTelemetry()
 					return
 				}
-				a.Config.YangConfig.Statistics.Success.Value++
+				a.Github.state.Success++
 			case "ACTION_pull_request":
 				log.Print("Git pull-request action")
 				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
 					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
 					return
 				}
 				if a.Github.Ref == nil {
@@ -257,6 +255,8 @@ func (a *Agent) updateConfigTelemetry() {
 		log.Fatalf("Can not marshal config data:%v error %s", *a.Config.YangConfig, err)
 	}
 	jsonStr := string(jsData)
+
+	log.Printf("JSON string: %s", jsonStr)
 
 	log.Printf("Sending telemetry update js_path: %s js_data: %s", jsPath, jsonStr)
 	a.updateTelemetry(&jsPath, &jsonStr)
