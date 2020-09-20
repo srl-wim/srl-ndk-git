@@ -210,7 +210,7 @@ A:wan1# info from state / git-client
     owner ""
     repo srl-lab-config-store
     file wan1-config.json
-    token 1d644cd6fbac8d69a0979f83944c2c5b9afccede
+    token *************************
     author WHenderickx
     author-email wim.henderickx@gmail.com
     branch test-branch2
