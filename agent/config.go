@@ -52,6 +52,12 @@ type yangGitStatistics struct {
 	} `json:"failures"`
 }
 
+type gitClientState struct {
+	OperState string
+	Success   uint64
+	Failure   uint64
+}
+
 type cfgTranxEntry struct {
 	Op   srlndk.SdkMgrOperation
 	Key  *[]string
@@ -104,7 +110,7 @@ func (a *Agent) HandleConfigEvent(op srlndk.SdkMgrOperation, key *srlndk.ConfigK
 	}
 
 	// handle test agent configuration event
-	for _, item := range a.Config.cfgTranxMap[".git"] {
+	for _, item := range a.Config.cfgTranxMap[".git_client"] {
 		a.HandleGitConfigEvent(item.Op, item.Key, item.Data)
 	}
 
@@ -114,12 +120,12 @@ func (a *Agent) HandleConfigEvent(op srlndk.SdkMgrOperation, key *srlndk.ConfigK
 
 // HandleGitConfigEvent function
 func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, data *string) {
-	log.Printf(".git jsPath %v with operation %v", *key, op)
+	log.Printf(".git_client jsPath %v with operation %v", *key, op)
 	if data == nil {
 		if op == srlndk.SdkMgrOperation_Delete {
 			// Handle delete Configuration
 			log.Printf("Handle Delete Config")
-			jsPath := ".git"
+			jsPath := ".git_client"
 			a.deleteTelemetry(&jsPath)
 
 		}
@@ -154,10 +160,9 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 			log.Printf("GIT connect")
 			a.GitClient()
 			a.Github.token = &a.Config.YangConfig.Token.Value
-			a.Config.YangConfig.OperState = "OPER_STATE_up"
-			a.Config.YangConfig.Statistics.Success.Value = 0
-			a.Config.YangConfig.Statistics.Failure.Value = 0
-
+			a.Github.state.OperState = "OPER_STATE_up"
+			a.Github.state.Success = 0
+			a.Github.state.Failure = 0
 		}
 
 		log.Printf("Action: %s \n", a.Config.YangConfig.Action)
@@ -167,13 +172,13 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 				log.Print("Git branck action")
 				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
 					log.Printf("Error: Unable to get/create the commit reference: %s\n", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if a.Github.Ref == nil {
 					log.Printf("Error: No error where returned but the reference is nil")
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
@@ -182,25 +187,25 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 				log.Print("Git commit action")
 				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
 					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if a.Github.Ref == nil {
 					log.Printf("Error: No error where returned but the reference is nil")
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if err := a.GetTree(); err != nil {
 					log.Printf("Error Unable to create the tree based on the provided files: %s\n", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if err := a.PushCommit(a.Github.Ref, a.Github.Tree); err != nil {
 					log.Printf("Error Unable to create the commit: %s\n", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
@@ -209,29 +214,29 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 				log.Print("Git pull-request action")
 				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
 					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if a.Github.Ref == nil {
 					log.Printf("Error: No error where returned but the reference is nil")
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if err := a.GetTree(); err != nil {
 					log.Printf("Error: Unable to create the tree based on the provided files: %s\n", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
 				if err := a.CreatePR(&a.Config.YangConfig.Branch.Value); err != nil {
 					log.Printf("Error while creating the pull request: %s", err)
-					a.Config.YangConfig.Statistics.Failure.Value++
+					a.Github.state.Failure++
 					a.updateConfigTelemetry()
 					return
 				}
-				a.Config.YangConfig.Statistics.Success.Value++
+				a.Github.state.Success++
 			default:
 				log.Printf("Unknown Action: %s \n", a.Config.YangConfig.Action)
 			}
@@ -243,7 +248,10 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 }
 
 func (a *Agent) updateConfigTelemetry() {
-	jsPath := ".git"
+	jsPath := ".git_client"
+	a.Config.YangConfig.OperState = a.Github.state.OperState
+	a.Config.YangConfig.Statistics.Success.Value = a.Github.state.Success
+	a.Config.YangConfig.Statistics.Failure.Value = a.Github.state.Failure
 	jsData, err := json.Marshal(a.Config.YangConfig)
 	if err != nil {
 		log.Fatalf("Can not marshal config data:%v error %s", *a.Config.YangConfig, err)

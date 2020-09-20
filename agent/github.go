@@ -35,6 +35,7 @@ func (a *Agent) GitClient() {
 	a.Github.prDescription = &prd
 	a.Github.file = &f
 	a.Github.client = github.NewClient(tc)
+	a.Github.state = new(gitClientState)
 }
 
 // GetRef function

@@ -63,6 +63,7 @@ type Agent struct {
 		file          *string
 		Ref           *github.Reference
 		Tree          *github.Tree
+		state         *gitClientState
 	}
 }
 
