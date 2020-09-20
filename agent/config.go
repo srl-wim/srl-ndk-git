@@ -17,7 +17,7 @@ type yangGit struct {
 	Organization struct {
 		Value string `json:"value"`
 	} `json:"organization"`
-	OWner struct {
+	Owner struct {
 		Value string `json:"value"`
 	} `json:"owner"`
 	Repo struct {
@@ -161,80 +161,84 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 		}
 
 		log.Printf("Action: %s \n", a.Config.YangConfig.Action)
-		switch a.Config.YangConfig.Action {
-		case "ACTION_branch":
-			log.Print("Git branck action")
-			if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Printf("Error: Unable to get/create the commit reference: %s\n", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
+		if a.Config.YangConfig.Branch.Value != "" && (a.Config.YangConfig.Owner.Value != "" || a.Config.YangConfig.Organization.Value != "") && a.Config.YangConfig.Author.Value != "" && a.Config.YangConfig.AuthorEmail.Value != "" && a.Config.YangConfig.Repo.Value != "" {
+			switch a.Config.YangConfig.Action {
+			case "ACTION_branch":
+				log.Print("Git branck action")
+				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
+					log.Printf("Error: Unable to get/create the commit reference: %s\n", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if a.Github.Ref == nil {
+					log.Printf("Error: No error where returned but the reference is nil")
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				a.Config.YangConfig.Statistics.Success.Value++
+			case "ACTION_commit":
+				log.Print("Git commit action")
+				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
+					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if a.Github.Ref == nil {
+					log.Printf("Error: No error where returned but the reference is nil")
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if err := a.GetTree(); err != nil {
+					log.Printf("Error Unable to create the tree based on the provided files: %s\n", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if err := a.PushCommit(a.Github.Ref, a.Github.Tree); err != nil {
+					log.Printf("Error Unable to create the commit: %s\n", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				a.Config.YangConfig.Statistics.Success.Value++
+			case "ACTION_pull_request":
+				log.Print("Git pull-request action")
+				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
+					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if a.Github.Ref == nil {
+					log.Printf("Error: No error where returned but the reference is nil")
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if err := a.GetTree(); err != nil {
+					log.Printf("Error: Unable to create the tree based on the provided files: %s\n", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				if err := a.CreatePR(&a.Config.YangConfig.Branch.Value); err != nil {
+					log.Printf("Error while creating the pull request: %s", err)
+					a.Config.YangConfig.Statistics.Failure.Value++
+					a.updateConfigTelemetry()
+					return
+				}
+				a.Config.YangConfig.Statistics.Success.Value++
+			default:
+				log.Printf("Unknown Action: %s \n", a.Config.YangConfig.Action)
 			}
-			if a.Github.Ref == nil {
-				log.Printf("Error: No error where returned but the reference is nil")
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			a.Config.YangConfig.Statistics.Success.Value++
-		case "ACTION_commit":
-			log.Print("Git commit action")
-			if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			if a.Github.Ref == nil {
-				log.Printf("Error: No error where returned but the reference is nil")
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			if err := a.GetTree(); err != nil {
-				log.Printf("Error Unable to create the tree based on the provided files: %s\n", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			if err := a.PushCommit(a.Github.Ref, a.Github.Tree); err != nil {
-				log.Printf("Error Unable to create the commit: %s\n", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			a.Config.YangConfig.Statistics.Success.Value++
-		case "ACTION_pull_request":
-			log.Print("Git pull-request action")
-			if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			if a.Github.Ref == nil {
-				log.Printf("Error: No error where returned but the reference is nil")
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			if err := a.GetTree(); err != nil {
-				log.Printf("Error: Unable to create the tree based on the provided files: %s\n", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			if err := a.CreatePR(&a.Config.YangConfig.Branch.Value); err != nil {
-				log.Printf("Error while creating the pull request: %s", err)
-				a.Config.YangConfig.Statistics.Failure.Value++
-				a.updateConfigTelemetry()
-				return
-			}
-			a.Config.YangConfig.Statistics.Success.Value++
-		default:
-			log.Printf("Unknown Action: %s \n", a.Config.YangConfig.Action)
+			a.updateConfigTelemetry()
+		} else {
+			log.Print("Fill out all fields before we can do an action: Branch && repo && Author && AuthorEmail && (organization or owner)")
 		}
-		a.updateConfigTelemetry()
 	}
 }
 
