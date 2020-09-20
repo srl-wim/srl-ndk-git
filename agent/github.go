@@ -26,7 +26,7 @@ func (a *Agent) GitClient() {
 	bb := "master"
 	prs := "PR Subject"
 	prd := "PR Description"
-	f := "/home/admin/local.cfg"
+	f := "/etc/opt/srlinux/config.json"
 
 	a.Github.ctx = ctx
 	a.Github.baseBranch = &bb
