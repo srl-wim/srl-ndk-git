@@ -34,7 +34,7 @@ Below is a procedure to install the agent using yum, but there are other methods
 ```bash
 login to the SRL instance ssh admin@<ip address>
 from the command prompt execute bash
-sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.2.0/srl-ndk-git_0.2.0_linux_amd64.rpm
+sudo yum install https://github.com/srl-wim/srl-ndk-git/releases/download/v0.2.0/srl-ndk-git_0.2.0_linux_amd64.rpm -y
 ```
 
 Example:
@@ -164,7 +164,6 @@ Information that the agent is providing is also send to /var/log/srlinux/stdout/
 ## Open items
 
 * action: should be an atomic command without commit stay
-* action yang: enum branch, commit, pull-requst
 * yang: space in the name
 * yang: store token in hash form
 * local file -> now it is fixed
@@ -174,3 +173,4 @@ Information that the agent is providing is also send to /var/log/srlinux/stdout/
 ## Ongoing
 * Telemetry
 * yang: make namespace variable -> now it is fixed to mgmt
+* action yang: enum branch, commit, pull-requst
