@@ -8,5 +8,6 @@ ndk-git:
     yang-modules:
         names: 
             - "ndk-git"
+            - "ndk-git-types"
         source-directories:
             - "/opt/ndk-git/yang/"
