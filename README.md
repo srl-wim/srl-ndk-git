@@ -164,13 +164,14 @@ Information that the agent is providing is also send to /var/log/srlinux/stdout/
 ## Open items
 
 * action: should be an atomic command without commit stay
+* CommitMessage, PRmesaage, etc -> how to handle this better versus hard coding
 * yang: space in the name
 * yang: store token in hash form
-* local file -> now it is fixed
+* We use the startup file as source
 * Why is ygot not generating the struct so we can marshal the data
 * Enabling this through a proxy
+
 
 ## Ongoing
 * Telemetry
 * yang: make namespace variable -> now it is fixed to mgmt
-* action yang: enum branch, commit, pull-requst

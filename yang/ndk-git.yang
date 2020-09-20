@@ -133,6 +133,7 @@ module git {
             "Common State for git";
         leaf oper-state {
             type srl_nokia-comm:oper-state;
+            default "down";
             description
               "Details the operational state of the git connection";
             config false;
