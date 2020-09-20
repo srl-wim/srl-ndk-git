@@ -155,6 +155,9 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 			a.GitClient()
 			a.Github.token = &a.Config.YangConfig.Token.Value
 			a.Config.YangConfig.OperState = "OPER_STATE_up"
+			a.Config.YangConfig.Statistics.Success.Value = 0
+			a.Config.YangConfig.Statistics.Failure.Value = 0
+
 		}
 
 		log.Printf("Action: %s \n", a.Config.YangConfig.Action)
