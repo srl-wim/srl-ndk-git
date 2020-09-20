@@ -168,6 +168,7 @@ set / git-client token ****
 set / git-client author WHenderickx
 set / git-client author-email wim.henderickx@gmail.com
 set / git-client branch test-branch2
+commit stay
 ```
 
 ### Github actions
