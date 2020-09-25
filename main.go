@@ -22,6 +22,7 @@ func main() {
 		log.Printf("failed to create agent: %v", err)
 		os.Exit(1)
 	}
+	a.StartGRPCServer()
 	wg := new(sync.WaitGroup)
 	wg.Add(1)
 	go a.KeepAlive(ctx, time.Minute)

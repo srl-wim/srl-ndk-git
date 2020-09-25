@@ -1,0 +1,15 @@
+syntax = "proto3";
+package gitapi;
+
+message Action {
+  string kind = 1;
+  string attributes = 2;
+}
+
+message ActionResponse {
+    string response =1; 
+}
+
+service Git {
+  rpc Command(Action) returns (ActionResponse) {}
+}
