@@ -48,8 +48,8 @@ nfpms:
       ./dist/srl-ndk-git_linux_amd64/srl-ndk-git: "/opt/srlinux/usr/bin/ndk-git"
     config_files:
       ./yang/ndk-git.yang: "/opt/ndk-git/yang/ndk-git.yang"
-      ./yang/ndk-git-types.yang: "/opt/ndk-git/yang/ndk-git-types.yang"
       ./yml/ndk-git.yml: "/etc/opt/srlinux/appmgr/ndk-git.yml"
+      ./client/git_client.py: "/etc/opt/srlinux/cli/plugins/git_client.py"
     overrides:
       rpm:
         scripts:

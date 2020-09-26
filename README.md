@@ -1,7 +1,7 @@
 # srl-ndk-git
 
 This agent extends SR-Linux to act as a client to [github](https://github.com). It allows to create branches, commit files and create Pull-requests and use Githib as a change management system for the configuration files of SRL devices.
-
+This SW package extends both the CLI with python and the Agent is written in [golang](https://golang.org).
 
 ## Github
 
@@ -57,6 +57,14 @@ Another alternative is downloading the image locally and installing it locally u
 
 ```
 sudo yum install srl-ndk-git_0.1.0_linux_amd64.rpm
+```
+
+### Python extensions
+
+Given we use python extensions for the cli you might have to logout and login from the cli
+
+```
+quit
 ```
 
 ## Configuration
@@ -163,11 +171,11 @@ Example:
 enter candidate
 set / git-client organization srl-wim
 set / git-client repo srl-lab-config-store
-set / git-client file wan1-config.json
-set / git-client token ****
-set / git-client author WHenderickx
+set / git-client filename wan1-config.json
+set / git-client author "Wim Henderickx"
 set / git-client author-email wim.henderickx@gmail.com
 set / git-client branch test-branch2
+set / git-client token ****
 commit stay
 ```
 
@@ -178,27 +186,23 @@ In order to perform a github action and workflow you can execute the following s
 Create a branch
 
 ```
-enter candidate
-set / git-client action branch
-commit stay
+/ tools git branch
 ```
 
 Commit; the file we use to commit to github is the startup file.
 
 ```
-enter candidate
-save startup
-set / git-client action commit
-commit stay
+/ tools git commit "first release"
 ```
 
 Once you are ok with the updates you can create a pull request
 
 ```
-enter candidate
-set / git-client action pull-request
-commit stay
+/ tools git pull-request "first release"
 ```
+
+### Aliasing
+
 
 ## State
 
@@ -230,11 +234,11 @@ Information that the agent is providing is also send to /var/log/srlinux/stdout/
 
 ## Open items
 
-* action: should be an atomic command without commit stay
 * CommitMessage, PRmessage, etc -> how to handle this better versus hard coding
-* yang: space in the name
+* Validation before sending to the RPC server
 * yang: store token in hash form
 * Enabling this through a proxy
+* Aliasing
 
 ## Ongoing
 * to be tested: network-instance

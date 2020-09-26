@@ -6,9 +6,6 @@ module ndk-git {
     prefix "srl_sdk_apps-ndk-git";
 
     // imports
-    import ndk-git-types {
-        prefix srl_sdk_apps-ndk-git-types;
-    }
     import srl_nokia-common {
         prefix srl_nokia-comm;
     }
@@ -63,7 +60,7 @@ module ndk-git {
                 length "0..255";
             }
             description
-                "Git organization";
+                "Organization where your repo belongs to";
         }
         leaf owner {
             type string {
@@ -72,7 +69,7 @@ module ndk-git {
                 length "0..255";
             }
             description
-                "Git organization";
+                "Owner where your repo belongs to";
         }
         leaf repo {
             type string {
@@ -81,16 +78,16 @@ module ndk-git {
                 length "0..255";
             }
             description
-                "Git repo";
+                "The repository that is used in git to store the configuration files in";
         }
-        leaf file {
+        leaf filename {
             type string {
                 // Add all accepted characters here
                 pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
                 length "0..255";
             }
             description
-                "Git repo";
+                "The filename that is used in the git repo to store your configuration in";
         }
 
         leaf token {
@@ -99,6 +96,8 @@ module ndk-git {
                  pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
                  length "0..255";
             }
+            description
+                "The github token used to authenticate you to github";
             //type string {
             //    srl-ext:generated-class-name "SecretKey";
             //}
@@ -111,6 +110,8 @@ module ndk-git {
                 pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
                 length "0..255";
             }
+            description
+                "The author name used in the commit";
         }
         leaf author-email {
             type string {
@@ -118,6 +119,8 @@ module ndk-git {
                 pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
                 length "0..255";
             }
+            description
+                "The author email used in the commit";
         }
         leaf branch {
             type string {
@@ -125,14 +128,8 @@ module ndk-git {
                 pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
                 length "0..255";
             }
-        }
-        leaf action {
-            type srl_sdk_apps-ndk-git-types:action-type;
-            // type string {
-            //     // Add all accepted characters here
-            //     pattern "[A-Za-z0-9 !@#$%^&()|+=`~.,'/_:;?-]*";
-            //     length "0..255";
-            // }
+            description
+                "The branch that is used to commit your files to";
         }
     }
 

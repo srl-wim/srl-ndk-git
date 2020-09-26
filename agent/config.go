@@ -23,9 +23,9 @@ type yangGit struct {
 	Repo struct {
 		Value string `json:"value"`
 	} `json:"repo"`
-	File struct {
+	FileName struct {
 		Value string `json:"value"`
-	} `json:"file"`
+	} `json:"filename"`
 	Token struct {
 		Value string `json:"value"`
 	} `json:"token"`
@@ -163,84 +163,6 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 			a.Github.state.OperState = "OPER_STATE_up"
 			a.Github.state.Success = 0
 			a.Github.state.Failure = 0
-		}
-
-		log.Printf("Action: %s \n", a.Config.YangConfig.Action)
-		if a.Config.YangConfig.Branch.Value != "" && (a.Config.YangConfig.Owner.Value != "" || a.Config.YangConfig.Organization.Value != "") && a.Config.YangConfig.Author.Value != "" && a.Config.YangConfig.AuthorEmail.Value != "" && a.Config.YangConfig.Repo.Value != "" {
-			switch a.Config.YangConfig.Action {
-			case "ACTION_branch":
-				log.Print("Git branch action")
-				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-					log.Printf("Error: Unable to get/create the commit reference: %s\n", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				if a.Github.Ref == nil {
-					log.Printf("Error: No error where returned but the reference is nil")
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				a.Github.state.Success++
-			case "ACTION_commit":
-				log.Print("Git commit action")
-				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				if a.Github.Ref == nil {
-					log.Printf("Error: No error where returned but the reference is nil")
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				if err := a.GetTree(); err != nil {
-					log.Printf("Error Unable to create the tree based on the provided files: %s\n", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				if err := a.PushCommit(a.Github.Ref, a.Github.Tree); err != nil {
-					log.Printf("Error Unable to create the commit: %s\n", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				a.Github.state.Success++
-			case "ACTION_pull_request":
-				log.Print("Git pull-request action")
-				if err := a.GetRef(&a.Config.YangConfig.Branch.Value); err != nil {
-					log.Printf("Error Unable to get/create the commit reference: %s\n", err)
-					return
-				}
-				if a.Github.Ref == nil {
-					log.Printf("Error: No error where returned but the reference is nil")
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				if err := a.GetTree(); err != nil {
-					log.Printf("Error: Unable to create the tree based on the provided files: %s\n", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				if err := a.CreatePR(&a.Config.YangConfig.Branch.Value); err != nil {
-					log.Printf("Error while creating the pull request: %s", err)
-					a.Github.state.Failure++
-					a.updateConfigTelemetry()
-					return
-				}
-				a.Github.state.Success++
-			default:
-				log.Printf("Unknown Action: %s \n", a.Config.YangConfig.Action)
-			}
-			a.updateConfigTelemetry()
-		} else {
-			log.Print("Fill out all fields before we can do an action: Branch && repo && Author && AuthorEmail && (organization or owner)")
 		}
 	}
 }

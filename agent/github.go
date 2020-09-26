@@ -101,7 +101,7 @@ func (a *Agent) GetTree() (err error) {
 	// Create a tree with what to commit.
 	entries := []*github.TreeEntry{}
 
-	file := a.Config.YangConfig.File.Value
+	file := a.Config.YangConfig.FileName.Value
 	content, err := ioutil.ReadFile(*a.Github.file)
 
 	entry := &github.TreeEntry{
@@ -110,6 +110,8 @@ func (a *Agent) GetTree() (err error) {
 		Content: github.String(string(content)),
 		Mode:    github.String("100644"),
 	}
+
+	// log.Printf("File: %v", entry)
 
 	entries = append(entries, entry)
 
@@ -141,6 +143,8 @@ func (a *Agent) GetTree() (err error) {
 			return nil
 		}
 	}
+
+	// log.Printf("Organization: %s, Repo: %s, Ref: %s", o, a.Config.YangConfig.Repo.Value, *a.Github.Ref.Object.SHA)
 
 	a.Github.Tree, _, err = a.Github.client.Git.CreateTree(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, *a.Github.Ref.Object.SHA, entries)
 	return err

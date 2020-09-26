@@ -29,7 +29,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type Action struct {
+type Command struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -38,8 +38,8 @@ type Action struct {
 	Attributes string `protobuf:"bytes,2,opt,name=attributes,proto3" json:"attributes,omitempty"`
 }
 
-func (x *Action) Reset() {
-	*x = Action{}
+func (x *Command) Reset() {
+	*x = Command{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_gitapi_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -47,13 +47,13 @@ func (x *Action) Reset() {
 	}
 }
 
-func (x *Action) String() string {
+func (x *Command) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Action) ProtoMessage() {}
+func (*Command) ProtoMessage() {}
 
-func (x *Action) ProtoReflect() protoreflect.Message {
+func (x *Command) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_gitapi_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -65,26 +65,26 @@ func (x *Action) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Action.ProtoReflect.Descriptor instead.
-func (*Action) Descriptor() ([]byte, []int) {
+// Deprecated: Use Command.ProtoReflect.Descriptor instead.
+func (*Command) Descriptor() ([]byte, []int) {
 	return file_proto_gitapi_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Action) GetKind() string {
+func (x *Command) GetKind() string {
 	if x != nil {
 		return x.Kind
 	}
 	return ""
 }
 
-func (x *Action) GetAttributes() string {
+func (x *Command) GetAttributes() string {
 	if x != nil {
 		return x.Attributes
 	}
 	return ""
 }
 
-type ActionResponse struct {
+type CommandResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -92,8 +92,8 @@ type ActionResponse struct {
 	Response string `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
 }
 
-func (x *ActionResponse) Reset() {
-	*x = ActionResponse{}
+func (x *CommandResponse) Reset() {
+	*x = CommandResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_proto_gitapi_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -101,13 +101,13 @@ func (x *ActionResponse) Reset() {
 	}
 }
 
-func (x *ActionResponse) String() string {
+func (x *CommandResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ActionResponse) ProtoMessage() {}
+func (*CommandResponse) ProtoMessage() {}
 
-func (x *ActionResponse) ProtoReflect() protoreflect.Message {
+func (x *CommandResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_gitapi_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -119,12 +119,12 @@ func (x *ActionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ActionResponse.ProtoReflect.Descriptor instead.
-func (*ActionResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CommandResponse.ProtoReflect.Descriptor instead.
+func (*CommandResponse) Descriptor() ([]byte, []int) {
 	return file_proto_gitapi_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ActionResponse) GetResponse() string {
+func (x *CommandResponse) GetResponse() string {
 	if x != nil {
 		return x.Response
 	}
@@ -135,18 +135,18 @@ var File_proto_gitapi_proto protoreflect.FileDescriptor
 
 var file_proto_gitapi_proto_rawDesc = []byte{
 	0x0a, 0x12, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x69, 0x74, 0x61, 0x70, 0x69, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x06, 0x67, 0x69, 0x74, 0x61, 0x70, 0x69, 0x22, 0x3c, 0x0a, 0x06,
-	0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x1e, 0x0a, 0x0a, 0x61, 0x74,
-	0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a,
-	0x61, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73, 0x22, 0x2c, 0x0a, 0x0e, 0x41, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1a, 0x0a, 0x08,
-	0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
-	0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x3a, 0x0a, 0x03, 0x47, 0x69, 0x74, 0x12,
-	0x33, 0x0a, 0x07, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x0e, 0x2e, 0x67, 0x69, 0x74,
-	0x61, 0x70, 0x69, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x16, 0x2e, 0x67, 0x69, 0x74,
-	0x61, 0x70, 0x69, 0x2e, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x6f, 0x74, 0x6f, 0x12, 0x06, 0x67, 0x69, 0x74, 0x61, 0x70, 0x69, 0x22, 0x3d, 0x0a, 0x07,
+	0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x1e, 0x0a, 0x0a, 0x61,
+	0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0a, 0x61, 0x74, 0x74, 0x72, 0x69, 0x62, 0x75, 0x74, 0x65, 0x73, 0x22, 0x2d, 0x0a, 0x0f, 0x43,
+	0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1a,
+	0x0a, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0x3b, 0x0a, 0x03, 0x47, 0x69,
+	0x74, 0x12, 0x34, 0x0a, 0x06, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0f, 0x2e, 0x67, 0x69,
+	0x74, 0x61, 0x70, 0x69, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x1a, 0x17, 0x2e, 0x67,
+	0x69, 0x74, 0x61, 0x70, 0x69, 0x2e, 0x43, 0x6f, 0x6d, 0x6d, 0x61, 0x6e, 0x64, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -163,12 +163,12 @@ func file_proto_gitapi_proto_rawDescGZIP() []byte {
 
 var file_proto_gitapi_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_proto_gitapi_proto_goTypes = []interface{}{
-	(*Action)(nil),         // 0: gitapi.Action
-	(*ActionResponse)(nil), // 1: gitapi.ActionResponse
+	(*Command)(nil),         // 0: gitapi.Command
+	(*CommandResponse)(nil), // 1: gitapi.CommandResponse
 }
 var file_proto_gitapi_proto_depIdxs = []int32{
-	0, // 0: gitapi.Git.Command:input_type -> gitapi.Action
-	1, // 1: gitapi.Git.Command:output_type -> gitapi.ActionResponse
+	0, // 0: gitapi.Git.Action:input_type -> gitapi.Command
+	1, // 1: gitapi.Git.Action:output_type -> gitapi.CommandResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -183,7 +183,7 @@ func file_proto_gitapi_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_proto_gitapi_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Action); i {
+			switch v := v.(*Command); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -195,7 +195,7 @@ func file_proto_gitapi_proto_init() {
 			}
 		}
 		file_proto_gitapi_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ActionResponse); i {
+			switch v := v.(*CommandResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -239,7 +239,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type GitClient interface {
-	Command(ctx context.Context, in *Action, opts ...grpc.CallOption) (*ActionResponse, error)
+	Action(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error)
 }
 
 type gitClient struct {
@@ -250,9 +250,9 @@ func NewGitClient(cc grpc.ClientConnInterface) GitClient {
 	return &gitClient{cc}
 }
 
-func (c *gitClient) Command(ctx context.Context, in *Action, opts ...grpc.CallOption) (*ActionResponse, error) {
-	out := new(ActionResponse)
-	err := c.cc.Invoke(ctx, "/gitapi.Git/Command", in, out, opts...)
+func (c *gitClient) Action(ctx context.Context, in *Command, opts ...grpc.CallOption) (*CommandResponse, error) {
+	out := new(CommandResponse)
+	err := c.cc.Invoke(ctx, "/gitapi.Git/Action", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -261,35 +261,35 @@ func (c *gitClient) Command(ctx context.Context, in *Action, opts ...grpc.CallOp
 
 // GitServer is the server API for Git service.
 type GitServer interface {
-	Command(context.Context, *Action) (*ActionResponse, error)
+	Action(context.Context, *Command) (*CommandResponse, error)
 }
 
 // UnimplementedGitServer can be embedded to have forward compatible implementations.
 type UnimplementedGitServer struct {
 }
 
-func (*UnimplementedGitServer) Command(context.Context, *Action) (*ActionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Command not implemented")
+func (*UnimplementedGitServer) Action(context.Context, *Command) (*CommandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Action not implemented")
 }
 
 func RegisterGitServer(s *grpc.Server, srv GitServer) {
 	s.RegisterService(&_Git_serviceDesc, srv)
 }
 
-func _Git_Command_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Action)
+func _Git_Action_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Command)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GitServer).Command(ctx, in)
+		return srv.(GitServer).Action(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gitapi.Git/Command",
+		FullMethod: "/gitapi.Git/Action",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GitServer).Command(ctx, req.(*Action))
+		return srv.(GitServer).Action(ctx, req.(*Command))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -299,8 +299,8 @@ var _Git_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*GitServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Command",
-			Handler:    _Git_Command_Handler,
+			MethodName: "Action",
+			Handler:    _Git_Action_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

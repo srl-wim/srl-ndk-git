@@ -1,15 +1,15 @@
 syntax = "proto3";
 package gitapi;
 
-message Action {
+message Command {
   string kind = 1;
   string attributes = 2;
 }
 
-message ActionResponse {
+message CommandResponse {
     string response =1; 
 }
 
 service Git {
-  rpc Command(Action) returns (ActionResponse) {}
+  rpc Action(Command) returns (CommandResponse) {}
 }
