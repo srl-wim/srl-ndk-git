@@ -159,7 +159,7 @@ def git_rpc_cal(method, action_args, output):
 
     payload = {
         "method": method,
-        "params": [{"Subject", subject, "Comment": comment}],
+        "params": [{"Subject": subject, "Comment": comment}],
         "jsonrpc": "2.0",
         "id": 0,
     }
