@@ -22,17 +22,17 @@ func (a *Agent) GitClient() {
 		&oauth2.Token{AccessToken: a.Config.YangConfig.Token.Value},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	cm := "commit message"
+	//cm := "commit message"
 	bb := "master"
-	prs := "PR Subject"
-	prd := "PR Description"
+	//prs := "PR SRL Git"
+	//prd := "PR Description"
 	f := "/etc/opt/srlinux/config.json"
 
 	a.Github.ctx = ctx
 	a.Github.baseBranch = &bb
-	a.Github.commitMessage = &cm
-	a.Github.prSubject = &prs
-	a.Github.prDescription = &prd
+	//a.Github.commitMessage = &cm
+	//a.Github.prSubject = &prs
+	//a.Github.prDescription = &prd
 	a.Github.file = &f
 	a.Github.client = github.NewClient(tc)
 	a.Github.state = new(gitClientState)
@@ -151,7 +151,7 @@ func (a *Agent) GetTree() (err error) {
 }
 
 // PushCommit creates the commit in the given reference using the given tree.
-func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error) {
+func (a *Agent) PushCommit(args *Args, ref *github.Reference, tree *github.Tree) (err error) {
 	var nsName string
 	if a.Config.YangConfig.NetworkInstance.Value == "" {
 		nsName = "mgmt"
@@ -190,7 +190,7 @@ func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error)
 	// Create the commit using the tree.
 	date := time.Now()
 	author := &github.CommitAuthor{Date: &date, Name: &a.Config.YangConfig.Author.Value, Email: &a.Config.YangConfig.AuthorEmail.Value}
-	commit := &github.Commit{Author: author, Message: a.Github.commitMessage, Tree: tree, Parents: []*github.Commit{parent.Commit}}
+	commit := &github.Commit{Author: author, Message: &args.Comment, Tree: tree, Parents: []*github.Commit{parent.Commit}}
 	newCommit, _, err := a.Github.client.Git.CreateCommit(a.Github.ctx, o, a.Config.YangConfig.Repo.Value, commit)
 	if err != nil {
 		return err
@@ -203,7 +203,7 @@ func (a *Agent) PushCommit(ref *github.Reference, tree *github.Tree) (err error)
 }
 
 // CreatePR creates a pull request. Based on: https://godoc.org/github.com/google/go-github/github#example-PullRequestsService-Create
-func (a *Agent) CreatePR(commitBranch *string) (err error) {
+func (a *Agent) CreatePR(args *Args, commitBranch *string) (err error) {
 	var nsName string
 	if a.Config.YangConfig.NetworkInstance.Value == "" {
 		nsName = "mgmt"
@@ -220,15 +220,15 @@ func (a *Agent) CreatePR(commitBranch *string) (err error) {
 		log.Fatal(err)
 	}
 
-	if *a.Github.prSubject == "" {
+	if args.Subject == "" {
 		return errors.New("missing `-pr-title` flag; skipping PR creation")
 	}
 
 	newPR := &github.NewPullRequest{
-		Title:               a.Github.prSubject,
+		Title:               &args.Subject,
 		Head:                commitBranch,
 		Base:                a.Github.baseBranch,
-		Body:                a.Github.prDescription,
+		Body:                &args.Comment,
 		MaintainerCanModify: github.Bool(true),
 	}
 

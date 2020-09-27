@@ -17,6 +17,7 @@ type Server struct {
 
 // Args struct
 type Args struct {
+	Subject string
 	Comment string
 }
 
@@ -126,7 +127,7 @@ func (s *Server) Commit(args *Args, reply *string) error {
 		*reply = fmt.Sprintf("Error Unable to create the tree based on the provided files: %s\n", err)
 		return nil
 	}
-	if err := a.PushCommit(a.Github.Ref, a.Github.Tree); err != nil {
+	if err := a.PushCommit(args, a.Github.Ref, a.Github.Tree); err != nil {
 		log.Printf("Error Unable to create the commit: %s\n", err)
 		a.Github.state.Failure++
 		a.updateConfigTelemetry()
@@ -165,7 +166,7 @@ func (s *Server) PullRequest(args *Args, reply *string) error {
 		*reply = fmt.Sprintf("Error: Unable to create the tree based on the provided files: %s\n", err)
 		return nil
 	}
-	if err := a.CreatePR(&a.Config.YangConfig.Branch.Value); err != nil {
+	if err := a.CreatePR(args, &a.Config.YangConfig.Branch.Value); err != nil {
 		log.Printf("Error while creating the pull request: %s", err)
 		a.Github.state.Failure++
 		a.updateConfigTelemetry()

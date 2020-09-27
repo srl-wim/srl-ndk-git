@@ -174,7 +174,7 @@ set / git-client repo srl-lab-config-store
 set / git-client filename wan1-config.json
 set / git-client author "Wim Henderickx"
 set / git-client author-email wim.henderickx@gmail.com
-set / git-client branch test-branch2
+set / git-client branch test-branchJE
 set / git-client token ****
 commit stay
 ```
