@@ -1,7 +1,7 @@
 # srl-ndk-git
 
 This agent extends SR-Linux to act as a client to [github](https://github.com). It allows to create branches, commit files and create Pull-requests and use Githib as a change management system for the configuration files of SRL devices.
-This SW package extends both the CLI with python and the Agent is written in [golang](https://golang.org).
+This SW package extends both the CLI with python; the agent is written in [golang](https://golang.org).
 
 ## Github
 
@@ -203,6 +203,17 @@ Once you are ok with the updates you can create a pull request
 
 ### Aliasing
 
+SR-Linux support aliasing, so you could customize the commands based on your needs.
+
+Example
+
+```
+environment alias "git branch" "/ tools git branch"
+environment alias "git commit" "/ tools git commit {}"
+environment alias "git pr" "/ tools git pull-request {} {}"
+```
+
+
 
 ## State
 
@@ -234,11 +245,8 @@ Information that the agent is providing is also send to /var/log/srlinux/stdout/
 
 ## Open items
 
-* CommitMessage, PRmessage, etc -> how to handle this better versus hard coding
-* Validation before sending to the RPC server
 * yang: store token in hash form
 * Enabling this through a proxy
-* Aliasing
 
 ## Ongoing
 * to be tested: network-instance

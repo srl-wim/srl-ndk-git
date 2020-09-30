@@ -50,6 +50,7 @@ nfpms:
       ./yang/ndk-git.yang: "/opt/ndk-git/yang/ndk-git.yang"
       ./yml/ndk-git.yml: "/etc/opt/srlinux/appmgr/ndk-git.yml"
       ./client/git_client.py: "/etc/opt/srlinux/cli/plugins/git_client.py"
+      ./client/show_git_client.py: "/etc/opt/srlinux/cli/plugins/reports/show_git_client.py"
     overrides:
       rpm:
         scripts:

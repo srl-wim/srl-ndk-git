@@ -12,7 +12,6 @@ from srlinux.syntax import Syntax
 from srlinux.mgmt.cli.parse_error import ParseError
 
 from srlinux.schema.data_store import DataStore
-from srlinux.location import build_path
 import requests
 import json
 
@@ -64,7 +63,7 @@ def git_branch_process(state, output, arguments, **_kwargs):
 
     yang_val, result_string = yang_validation(state)
     if yang_val:
-        git_rpc_cal('Server.Branch', action_arg, output)
+        git_rpc_call('Server.Branch', action_arg, output)
     else:
         output.print_error_line(result_string)
 
@@ -77,7 +76,7 @@ def git_commit_process(state, output, arguments, **_kwargs):
 
     yang_val, result_string = yang_validation(state)
     if yang_val:
-        git_rpc_cal('Server.Commit', action_arg, output)
+        git_rpc_call('Server.Commit', action_arg, output)
     else:
         output.print_error_line(result_string)
 
@@ -91,7 +90,7 @@ def git_pullrequest_process(state, output, arguments, **_kwargs):
     
     yang_val, result_string = yang_validation(state)
     if yang_val:
-        git_rpc_cal('Server.PullRequest', action_arg, output)
+        git_rpc_call('Server.PullRequest', action_arg, output)
     else:
         output.print_error_line(result_string)
 
@@ -142,7 +141,7 @@ def yang_validation(state):
 
     return yang_val, result_string
 
-def git_rpc_cal(method, action_args, output):
+def git_rpc_call(method, action_args, output):
     url = "http://localhost:7777"
 
     s_exists = 'subject' in action_args
