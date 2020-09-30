@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/rpc"
 	"net/rpc/jsonrpc"
+
+	"github.com/vishvananda/netns"
 )
 
 // Server struct
@@ -61,12 +63,28 @@ func (r *rpcRequest) Call() io.Reader {
 
 // StartJSONRPCServer start a JSONRPC server and waits for connection
 func StartJSONRPCServer(a *Agent) {
+	// Get NS
+	var nsName string
+	if a.Config.YangConfig.NetworkInstance.Value == "" {
+		nsName = "mgmt"
+	} else {
+		nsName = a.Config.YangConfig.NetworkInstance.Value
+	}
+	ns, err := netns.GetFromName("srbase-" + nsName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Set NS
+	err = netns.Set(ns)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	s := new(Server)
 	s.Agent = a
 	rpc.Register(s)
 
-	//rpc.Register(arith)
-	rpc.Register(s)
+	//rpc.Register(s)
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		defer req.Body.Close()
 		w.Header().Set("Content-Type", "application/json")

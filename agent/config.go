@@ -164,6 +164,7 @@ func (a *Agent) HandleGitConfigEvent(op srlndk.SdkMgrOperation, key *[]string, d
 			a.Github.state.Success = 0
 			a.Github.state.Failure = 0
 		}
+		a.updateConfigTelemetry()
 	}
 }
 
