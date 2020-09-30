@@ -65,9 +65,9 @@ class Plugin(CliPlugin):
 
     def _populate_data(self, state, arguments):
         result = Data(arguments.schema)
-        print(self._server_data.git_client.get())
+        //print(self._server_data.git_client.get())
         data = result.gitclient.create()
-        print(data)
+        //print(data)
         data.organization = self._server_data.git_client.get().organization or '<Unknown>'
         data.owner = self._server_data.git_client.get().owner or '<Unknown>'
         data.repo = self._server_data.git_client.get().repo or '<Unknown>'
@@ -76,7 +76,7 @@ class Plugin(CliPlugin):
         data.author = self._server_data.git_client.get().author or '<Unknown>'
         data.author_email = self._server_data.git_client.get().author_email or '<Unknown>'
         data.oper_state = self._server_data.git_client.get().oper_state or '<Unknown>'
-        print(data)
+        //print(data)
         
         self._add_children(data) 
         
