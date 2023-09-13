@@ -11,7 +11,7 @@ using the following YANG input files:
 Imported modules were sourced from:
 	- ../../../../goysrl/yang/...
 */
-package ndk-git
+package ndkgit
 
 import (
 	"encoding/json"
